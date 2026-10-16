@@ -1,0 +1,61 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/structural-engineers-consultants",
+      "destination": "/services/structural-engineering",
+      "permanent": true
+    },
+    {
+      "source": "/geotechnical-consultants",
+      "destination": "/services/geotechnical-engineering",
+      "permanent": true
+    },
+    {
+      "source": "/geotechnical-foundation-design",
+      "destination": "/services/geotechnical-foundation-design",
+      "permanent": true
+    },
+    {
+      "source": "/ground-improvement",
+      "destination": "/services/ground-improvement",
+      "permanent": true
+    },
+    {
+      "source": "/pile-design-company",
+      "destination": "/services/pile-design",
+      "permanent": true
+    },
+    {
+      "source": "/project-management",
+      "destination": "/services/project-management",
+      "permanent": true
+    },
+    {
+      "source": "/experts-witness",
+      "destination": "/services/expert-witness",
+      "permanent": true
+    },
+    {
+      "source": "/architectural-services",
+      "destination": "/services/architectural-services",
+      "permanent": true
+    },
+    {
+      "source": "/planning-services",
+      "destination": "/services/planning-services",
+      "permanent": true
+    },
+    {
+      "source": "/structural-designs",
+      "destination": "/services/structural-designs",
+      "permanent": true
+    },
+    {
+      "source": "/projects-8",
+      "destination": "/projects",
+      "permanent": true
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import CtaBand from '../components/site/CtaBand.astro';
+import Clients from '../components/home/Clients.astro';
+import { about } from '../data/site';
+---
+<Base title={about.title} description={about.description} image="/img/london-terrace.jpg">
+  <PageHero kicker={about.kicker} title={about.h1} img="/img/london-terrace.jpg" crumbs={[{ href: '/about', label: 'About Us' }]} />
+  <section class="ab">
+    <div class="container ab__grid">
+      <div class="ab__body">
+        {about.body.map((t, i) => <p class:list={{ lead: i === 0 }} data-reveal>{t}</p>)}
+      </div>
+      <div class="ab__solutions" data-reveal>
+        <p class="label">{about.solutionsH}</p>
+        <ul role="list">{about.solutions.map((s) => <li>{s}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="fd dark">
+    <div class:list={['container fd__grid', { 'fd__grid--solo': !about.founderPhoto }]}>
+      {about.founderPhoto && <figure class="fd__frame"><img class="grade" src={about.founderPhoto} alt={about.founderRole} loading="lazy" decoding="async" /></figure>}
+      <div class="fd__txt">
+        <p class="label fd__role">{about.founderRole}</p>
+        <p class="fd__bio" data-reveal>{about.founderBio}</p>
+        <div class="fd__cols">
+          <div data-reveal>
+            <p class="label fd__h">{about.keyProjectsH}</p>
+            <ol role="list" class="fd__kp">{about.keyProjects.map((k, i) => <li><span class="label">{String(i + 1).padStart(2, '0')}</span>{k}</li>)}</ol>
+          </div>
+          <div data-reveal style="--d:.08">
+            <p class="label fd__h">Education</p>
+            <ul role="list" class="fd__ul">{about.education.map((e) => <li>{e}</li>)}</ul>
+            <p class="label fd__h fd__h--gap">Professional Membership</p>
+            <ul role="list" class="fd__ul">{about.membership.map((e) => <li>{e}</li>)}</ul>
+            <img class="fd__ice" src="/img/logos/ice.png" alt="Institution of Civil Engineers" width="200" height="156" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ms">
+    <div class="container ms__grid">
+      <p class="label ms__label">{about.missionLabel}</p>
+      <h2 class="display ms__h" data-reveal>{about.missionH}</h2>
+      <p class="ms__p" data-reveal style="--d:.08">{about.mission}</p>
+      <div class="ms__clients" data-reveal style="--d:.12">
+        <h3 class="label">{about.clientsH}</h3>
+        <ul role="list">{about.clientTypes.map((c) => <li>{c}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+  <Clients />
+  <CtaBand />
+</Base>
+<style>
+  .ab { padding-block: var(--section); background: var(--paper); }
+  .ab__grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--s-6); }
+  .ab__body { display: grid; gap: var(--s-3); color: var(--ink-2); max-width: 68ch; }
+  .ab__body .lead { color: var(--navy); font-size: var(--fs-lead); }
+  .ab__solutions { background: var(--white); border: 1px solid var(--line-light); padding: var(--s-4); border-radius: var(--radius); align-self: start; }
+  .ab__solutions .label { color: var(--teal); margin-bottom: var(--s-2); }
+  .ab__solutions ul { margin: 0; padding: 0; }
+  .ab__solutions li { font-family: var(--font-display); font-weight: 750; font-stretch: 108%; font-size: 1.5rem; line-height: 1.1; padding: 0.55rem 0; border-bottom: 1px solid var(--line-light); color: var(--navy); text-transform: capitalize; }
+  .fd { padding-block: var(--section); }
+  .fd__grid { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.5fr); gap: var(--s-6); align-items: start; }
+  .fd__grid--solo { grid-template-columns: minmax(0, 1fr); }
+  .fd__grid--solo .fd__bio { max-width: 44ch; }
+  .fd__frame { aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden; background: var(--navy-2); }
+  .fd__frame img { width: 100%; height: 100%; object-fit: cover; }
+  .fd__role { color: var(--teal-hi); }
+  .fd__bio { margin-top: var(--s-2); font-family: var(--font-display); font-weight: 600; font-size: var(--fs-statement); line-height: 1.3; max-width: 36ch; }
+  .fd__cols { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--s-5); margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--line-dark); }
+  .fd__h { color: var(--teal-hi); margin-bottom: var(--s-2); }
+  .fd__h--gap { margin-top: var(--s-4); }
+  .fd__kp, .fd__ul { margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+  .fd__kp li { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); }
+  .fd__kp .label { color: var(--teal-hi); padding-top: 0.3rem; }
+  .fd__ul li { color: rgba(255, 255, 255, 0.85); }
+  .fd__ice { width: 110px; margin-top: var(--s-4); background: var(--white); padding: 0.6rem; border-radius: var(--radius); }
+  .ms { padding-block: var(--section); background: var(--white); }
+  .ms__grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--s-3) var(--s-6); }
+  .ms__label { grid-column: 1 / -1; color: var(--teal); }
+  .ms__h { font-size: var(--fs-display-3); color: var(--navy); line-height: 1.08; }
+  .ms__p { color: var(--ink-2); }
+  .ms__clients { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); align-items: baseline; margin-top: var(--s-4); padding-top: var(--s-3); border-top: 1px solid var(--line-light); }
+  .ms__clients h3 { color: var(--teal); }
+  .ms__clients ul { margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-weight: 600; color: var(--navy); }
+  @media (max-width: 960px) {
+    .ab__grid, .fd__grid, .ms__grid, .fd__cols { grid-template-columns: minmax(0, 1fr); }
+    .fd__frame { max-width: 320px; }
+  }
+</style>

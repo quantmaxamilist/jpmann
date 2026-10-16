@@ -1,0 +1,107 @@
+@import '@fontsource-variable/mona-sans/wdth.css';
+@import '@fontsource-variable/geist';
+@import '@fontsource/geist-mono/400.css';
+@import '@fontsource/geist-mono/500.css';
+@import './tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+img, svg, video, canvas { display: block; max-width: 100%; }
+img { height: auto; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, figure { margin: 0; }
+ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
+::selection { background: var(--teal); color: var(--white); }
+:focus-visible { outline: 2px solid var(--teal-hi); outline-offset: 3px; }
+
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-stretch: 112%;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.lead { font-size: var(--fs-lead); line-height: 1.55; }
+
+.dark { background: var(--navy); color: var(--white); }
+.dark .muted { color: rgba(255, 255, 255, 0.72); }
+.muted { color: var(--ink-2); }
+
+/* Buttons */
+.btn {
+  --bg: var(--teal);
+  --fg: var(--white);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 52px;
+  padding: 0 1.5rem;
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-text);
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast), transform var(--dur-fast);
+}
+.btn:hover { --bg: var(--teal-deep); }
+.btn svg { width: 16px; height: 16px; flex: none; transition: transform var(--dur) var(--ease-out); }
+.btn:hover svg { transform: translateX(3px); }
+.btn--light { --bg: var(--white); --fg: var(--navy); }
+.btn--light:hover { --bg: var(--paper-2); }
+.btn--ghost { --bg: transparent; --fg: currentColor; border-color: currentColor; }
+.btn--ghost:hover { --bg: rgba(255, 255, 255, 0.08); }
+.btn--navy { --bg: var(--navy); --fg: var(--white); }
+.btn--navy:hover { --bg: var(--navy-3); }
+
+.link-line {
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size var(--dur) var(--ease-out);
+}
+.link-line:hover { background-size: 100% 1px; }
+
+/* Shared photo grade so mixed phone shots read as one set */
+.grade { filter: saturate(0.82) contrast(1.06); }
+
+/* Reveals: transform/opacity only. Content is hidden only after core.js has started (html.reveal-on),
+   so a failed or slow script can never leave a section blank. */
+.reveal-on [data-reveal] { opacity: 0; transform: translateY(24px); }
+.reveal-on [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s var(--ease-out), transform 0.8s var(--ease-out);
+  transition-delay: calc(var(--d, 0) * 1s);
+}
+[data-reveal][data-instant] { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on [data-reveal] { opacity: 1; transform: none; }
+}

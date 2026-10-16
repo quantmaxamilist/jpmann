@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import Mark from '../components/site/Mark.astro';
+import { contact } from '../data/site';
+// Preload the two Latin font files every page renders first, so headings never swap after paint.
+import monaUrl from '@fontsource-variable/mona-sans/files/mona-sans-latin-wdth-normal.woff2?url';
+import geistUrl from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+
+interface Props { title: string; description?: string; image?: string; noindex?: boolean; schema?: object[] }
+const { title, description = '', image = '/img/site-piling-aerial.jpg', noindex = false, schema = [] } = Astro.props;
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '').replace(/\/$/, '');
+const canonical = 'https://www.jpmann.com' + path;
+const ld = {
+  '@context': 'https://schema.org', '@type': 'ProfessionalService', name: 'JPMANN',
+  url: 'https://www.jpmann.com', telephone: contact.phone, email: contact.email,
+  address: { '@type': 'PostalAddress', streetAddress: 'Anglo Dal House 5, Spring Villa Park', addressLocality: 'Edgware', addressRegion: 'Middlesex', postalCode: 'HA8 7EB', addressCountry: 'GB' },
+};
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:image" content={new URL(image, Astro.site).href} />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#001e30" />
+    <link rel="preload" as="font" type="font/woff2" href={monaUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={geistUrl} crossorigin />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try { if (sessionStorage.getItem('jpm:pt')) document.documentElement.classList.add('pt-arrive'); } catch (e) {}
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+    <slot name="schema" />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip sr-only" href="#main">Skip to content</a>
+    <Header />
+    <main id="main"><slot /></main>
+    <Footer />
+    <div id="pt" class="pt" aria-hidden="true"><Mark class="pt__mark" /></div>
+    <div id="cursor" class="cursor" aria-hidden="true"><i></i><i></i></div>
+    <script>import '../scripts/core.js';</script>
+  </body>
+</html>
+<style is:global>
+  .skip:focus { position: fixed; top: 8px; left: 8px; width: auto; height: auto; clip: auto; z-index: 200; background: var(--white); color: var(--navy); padding: 0.5rem 1rem; }
+  .pt { position: fixed; inset: 0; z-index: var(--z-transition); background: var(--navy); display: grid; place-items: center; visibility: hidden; pointer-events: none; transform: translateY(100%); }
+  .pt-arrive .pt { visibility: visible; transform: none; }
+  .pt__mark { width: 64px; color: var(--teal-hi); }
+  .cursor { display: none; }
+  .has-cursor .cursor { display: block; position: fixed; inset: 0; pointer-events: none; z-index: var(--z-cursor); opacity: 0; transition: opacity 0.2s; }
+  .has-cursor .cursor.is-on { opacity: 1; }
+  .cursor i { position: absolute; top: 0; left: 0; border-radius: 50%; }
+  .cursor i:first-child { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: var(--teal-hi); }
+  .cursor i:last-child { width: 24px; height: 24px; margin: -12px 0 0 -12px; border: 1.5px solid var(--teal-hi); transition: width 0.25s var(--ease-out), height 0.25s var(--ease-out), margin 0.25s var(--ease-out), opacity 0.2s; mix-blend-mode: normal; }
+  .cursor.is-link i:last-child { width: 40px; height: 40px; margin: -20px 0 0 -20px; }
+  .cursor.is-hide { opacity: 0 !important; }
+</style>

@@ -1,0 +1,47 @@
+---
+import Arrow from './Arrow.astro';
+import { contact } from '../../data/site';
+import fs from 'node:fs';
+interface Props { kicker?: string; title: string; lead?: string; img?: string; ctaHref?: string; crumbs?: { href: string; label: string }[] }
+const { kicker, title, lead, img, ctaHref = '/contact', crumbs = [] } = Astro.props;
+const small = img && fs.existsSync(`public${img.replace(/\.jpg$/, '-800.jpg')}`) ? img.replace(/\.jpg$/, '-800.jpg') : null;
+const crumbLd = crumbs.length ? { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ href: '/', label: 'Home' }, ...crumbs].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.label, item: 'https://www.jpmann.com' + (c.href === '/' ? '' : c.href) })) } : null;
+const srcset = small ? `${small} 800w, ${img} 1800w` : undefined;
+---
+{crumbLd && <script type="application/ld+json" set:html={JSON.stringify(crumbLd)} />}
+<section class:list={['ph dark', { 'ph--img': img }]}>
+  <div class="ph__bg" aria-hidden="true"><slot name="bg" /></div>
+  {img && <div class="ph__media"><img class="grade" src={img} srcset={srcset} sizes="100vw" alt="" width="1600" height="1000" fetchpriority="high" decoding="async" /></div>}
+  <div class="container ph__in">
+    {crumbs.length > 0 && (
+      <nav class="ph__crumbs label" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        {crumbs.map((c) => <><span aria-hidden="true">/</span><a href={c.href}>{c.label}</a></>)}
+      </nav>
+    )}
+    {kicker && <p class="label ph__kicker">{kicker}</p>}
+    <h1 class="display ph__h1">{title}</h1>
+    {lead && <p class="ph__lead">{lead}</p>}
+    <div class="ph__ctas">
+      <a class="btn" href={ctaHref}>Get a free quote <Arrow /></a>
+      <a class="btn btn--ghost" href={contact.phoneHref}>Call {contact.phone}</a>
+    </div>
+    <slot />
+  </div>
+</section>
+<style>
+  .ph { position: relative; isolation: isolate; overflow: hidden; padding-top: calc(var(--header-h) + clamp(3rem, 8vw, 7rem)); padding-bottom: clamp(3rem, 6vw, 5.5rem); background: radial-gradient(90% 120% at 85% 0%, var(--navy-3) 0%, var(--navy) 65%); }
+  .ph__bg { position: absolute; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
+  .ph__bg:empty { display: none; }
+  .ph__media { position: absolute; inset: 0; z-index: -2; }
+  .ph__media img { width: 100%; height: 100%; object-fit: cover; }
+  .ph--img::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(0, 30, 48, 0.95) 0%, rgba(0, 30, 48, 0.82) 45%, rgba(0, 30, 48, 0.35) 100%); }
+  .ph__crumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; color: rgba(255, 255, 255, 0.6); margin-bottom: var(--s-4); }
+  .ph__crumbs a { text-decoration: none; }
+  .ph__crumbs a:hover { color: var(--white); }
+  .ph__kicker { color: var(--teal-hi); margin-bottom: var(--s-2); }
+  .ph__h1 { font-size: var(--fs-display-2); max-width: 20ch; }
+  .ph__lead { margin-top: var(--s-3); max-width: 64ch; font-size: var(--fs-lead); color: rgba(255, 255, 255, 0.82); }
+  .ph__ctas { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+  @media (max-width: 640px) { .ph--img::before { background: rgba(0, 30, 48, 0.86); } .ph__ctas .btn { width: 100%; justify-content: center; } }
+</style>

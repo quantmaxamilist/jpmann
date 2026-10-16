@@ -1,0 +1,98 @@
+---
+import Logo from './Logo.astro';
+import Arrow from './Arrow.astro';
+import { nav, contact, services } from '../../data/site';
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const active = (href: string) => path === href || path.startsWith(href + '/');
+---
+<header class="hdr" data-header>
+  <div class="hdr__in container">
+    <Logo />
+    <nav class="hdr__nav" aria-label="Main">
+      <ul role="list">
+        {nav.map((n) => (
+          <li class={n.href === '/services' ? 'has-sub' : ''}>
+            <a href={n.href} class:list={['hdr__link', { 'is-active': active(n.href) }]} aria-current={active(n.href) ? 'page' : undefined}>{n.label}</a>
+            {n.href === '/services' && (
+              <div class="sub">
+                <ul role="list">
+                  {services.map((s) => <li><a href={`/services/${s.slug}`}>{s.name}</a></li>)}
+                </ul>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="hdr__cta">
+      <a class="hdr__phone" href={contact.phoneHref} aria-label={`Call ${contact.phone}`}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="currentColor"/></svg>
+        <span>{contact.phone}</span>
+      </a>
+      <a class="btn hdr__btn" href="/contact">Get a free quote <Arrow /></a>
+      <button class="hdr__menu" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
+        <span class="sr-only">Menu</span><i></i><i></i>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="menu" id="menu" data-menu hidden>
+  <nav class="container menu__in" aria-label="Mobile">
+    <ul role="list" class="menu__main">
+      <li><a href="/">Home</a></li>
+      {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <p class="label menu__label">Services</p>
+    <ul role="list" class="menu__sub">
+      {services.map((s) => <li><a href={`/services/${s.slug}`}>{s.name}</a></li>)}
+    </ul>
+    <div class="menu__contact">
+      <a class="btn" href={contact.phoneHref}>Call {contact.phone}</a>
+      <a class="btn btn--ghost" href={`mailto:${contact.email}`}>{contact.email}</a>
+    </div>
+  </nav>
+</div>
+<style>
+  .hdr { position: fixed; inset: 0 0 auto; z-index: var(--z-header); height: var(--header-h); color: var(--white); background: rgba(0, 30, 48, 0.9); border-bottom: 1px solid var(--line-dark); transition: transform 0.35s var(--ease-out); }
+  .hdr.is-hidden { transform: translateY(-100%); }
+  .hdr__in { height: 100%; display: flex; align-items: center; gap: var(--s-4); }
+  .hdr__nav { margin-left: auto; }
+  .hdr__nav > ul { display: flex; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+  .hdr__nav li { position: relative; }
+  .hdr__link { display: inline-flex; align-items: center; height: 44px; padding: 0 0.85rem; text-decoration: none; font-size: 0.9375rem; font-weight: 500; position: relative; }
+  .hdr__link::after { content: ''; position: absolute; left: 0.85rem; right: 0.85rem; bottom: 8px; height: 2px; background: var(--teal-hi); transform: scaleX(0); transform-origin: left; transition: transform var(--dur) var(--ease-out); }
+  .hdr__link:hover::after, .hdr__link.is-active::after { transform: scaleX(1); }
+  .sub { position: absolute; top: 100%; left: 0; padding-top: 10px; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 0.2s, transform 0.2s, visibility 0.2s; }
+  .has-sub:hover .sub, .has-sub:focus-within .sub { opacity: 1; visibility: visible; transform: none; }
+  .sub ul { list-style: none; margin: 0; padding: 0.5rem; width: 300px; background: var(--navy-2); border: 1px solid var(--line-dark); border-radius: var(--radius); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
+  .sub a { display: block; padding: 0.55rem 0.75rem; text-decoration: none; font-size: 0.9375rem; border-radius: 3px; }
+  .sub a:hover { background: var(--teal); }
+  .hdr__cta { display: flex; align-items: center; gap: var(--s-2); }
+  .hdr__phone { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; font-family: var(--font-mono); font-size: 0.875rem; white-space: nowrap; height: 44px; }
+  .hdr__phone svg { width: 16px; height: 16px; color: var(--teal-hi); }
+  .hdr__btn { min-height: 44px; padding: 0 1.1rem; font-size: 0.9375rem; white-space: nowrap; }
+  .hdr__menu { display: none; width: 44px; height: 44px; background: none; border: 1px solid var(--line-dark); border-radius: var(--radius); cursor: pointer; position: relative; }
+  .hdr__menu i { position: absolute; left: 12px; right: 12px; height: 2px; background: currentColor; transition: transform 0.3s var(--ease-out); }
+  .hdr__menu i:first-of-type { top: 17px; }
+  .hdr__menu i:last-of-type { top: 25px; }
+  .hdr__menu[aria-expanded='true'] i:first-of-type { transform: translateY(4px) rotate(45deg); }
+  .hdr__menu[aria-expanded='true'] i:last-of-type { transform: translateY(-4px) rotate(-45deg); }
+
+  .menu { position: fixed; inset: var(--header-h) 0 0; z-index: var(--z-menu); background: var(--navy); color: var(--white); overflow-y: auto; padding-block: var(--s-4) var(--s-5); }
+  .menu[hidden] { display: none; }
+  .menu ul { list-style: none; margin: 0; padding: 0; }
+  .menu__main a { display: block; padding: 0.4rem 0; font-family: var(--font-display); font-weight: 800; font-stretch: 110%; font-size: 1.75rem; text-decoration: none; }
+  .menu__label { margin: var(--s-4) 0 var(--s-1); color: var(--teal-hi); }
+  .menu__sub a { display: block; padding: 0.45rem 0; text-decoration: none; color: rgba(255, 255, 255, 0.82); border-bottom: 1px solid var(--line-dark); }
+  .menu__contact { display: grid; gap: var(--s-2); margin-top: var(--s-4); }
+  .menu__contact .btn { justify-content: center; }
+
+  @media (max-width: 1240px) { .hdr__phone span { display: none; } .hdr__phone { width: 44px; justify-content: center; border: 1px solid var(--line-dark); border-radius: var(--radius); } }
+  @media (max-width: 1040px) {
+    .hdr__nav { display: none; }
+    .hdr__cta { margin-left: auto; }
+    .hdr__menu { display: block; }
+  }
+  @media (max-width: 520px) { .hdr__btn { display: none; } .hdr__in { gap: var(--s-2); } .hdr__cta { gap: 0.5rem; } }
+</style>

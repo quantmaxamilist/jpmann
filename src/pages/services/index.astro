@@ -1,0 +1,85 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/site/PageHero.astro';
+import CtaBand from '../../components/site/CtaBand.astro';
+import Arrow from '../../components/site/Arrow.astro';
+import PhotoFade from '../../components/fx/PhotoFade.astro';
+import { pages, services, serviceSummary, serviceImage, brochure, small } from '../../data/site';
+const p = pages['services'];
+---
+<Base title={p.title} description={p.description}>
+  <PageHero kicker="OUR PROUD SERVICES" title="Building Construction Services Tailored to Your Project Needs" lead={p.description} crumbs={[{ href: '/services', label: 'Services' }]}>
+    <PhotoFade slot="bg" />
+  </PageHero>
+  <section class="sv">
+    <div class="container">
+      <ol class="sv__list" role="list">
+        {services.map((s, i) => (
+          <li data-reveal>
+            <a class="sv__row" href={`/services/${s.slug}`}>
+              <span class="sv__n label">{String(i + 1).padStart(2, '0')}.</span>
+              <span class="sv__img"><img class="grade" src={serviceImage[s.slug].replace(/\.jpg$/, '-400.jpg')} alt="" loading="lazy" decoding="async" width="800" height="600" /></span>
+              <span class="sv__txt">
+                <span class="sv__name">{s.name}</span>
+                <span class="sv__sum">{serviceSummary(s)}</span>
+              </span>
+              <span class="sv__go"><Arrow /></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+  <section class="cap dark">
+    <div class="container">
+      <p class="cap__intro" data-reveal>{brochure.intro}</p>
+      <div class="cap__grid">
+        {[{ h: brochure.structuralH, items: brochure.structural }, { h: brochure.geotechnicalH, items: brochure.geotechnical }].map((c) => (
+          <div data-reveal>
+            <h2 class="cap__h">{c.h}</h2>
+            <ul class="cap__list" role="list">
+              {c.items.map((it) => {
+                const m = it.match(/^(.*?)\s*(\(.*\))$/);
+                return <li>{m ? <>{m[1]} <span>{m[2]}</span></> : it}</li>;
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <a class="btn btn--ghost cap__pdf" href="/sales-brochure">Sales Brochure <Arrow /></a>
+    </div>
+  </section>
+  <CtaBand />
+</Base>
+<style>
+  .cap { padding-block: var(--section); }
+  .cap__intro { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-statement); line-height: 1.3; max-width: 46ch; }
+  .cap__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6); margin-top: var(--s-6); }
+  .cap__h { font-family: var(--font-display); font-weight: 800; font-stretch: 108%; font-size: var(--fs-display-3); line-height: 1.05; color: var(--teal-hi); margin-bottom: var(--s-3); }
+  .cap__list { margin: 0; padding: 0; border-top: 1px solid var(--line-dark); }
+  .cap__list li { padding: 0.8rem 0 0.8rem 1.4rem; border-bottom: 1px solid var(--line-dark); position: relative; font-weight: 550; }
+  .cap__list li::before { content: ''; position: absolute; left: 0; top: 1.25rem; width: 8px; height: 8px; background: var(--teal-hi); }
+  .cap__list span { font-weight: 400; color: rgba(255, 255, 255, 0.66); }
+  .cap__pdf { margin-top: var(--s-5); color: var(--white); }
+  @media (max-width: 860px) { .cap__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-5); } }
+  .sv { padding-block: var(--section); background: var(--paper); }
+  .sv__list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-light); }
+  .sv__row { display: grid; grid-template-columns: 4rem 200px minmax(0, 1fr) 32px; gap: var(--s-4); align-items: center; padding: var(--s-3) 0; border-bottom: 1px solid var(--line-light); text-decoration: none; transition: background 0.25s; }
+  .sv__row:hover { background: var(--white); }
+  .sv__n { color: var(--teal); padding-left: 0.5rem; }
+  .sv__img { aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--radius); background: var(--paper-2); }
+  .sv__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease-out); }
+  .sv__row:hover .sv__img img { transform: scale(1.06); }
+  .sv__txt { display: grid; gap: 0.4rem; }
+  .sv__name { font-family: var(--font-display); font-weight: 800; font-stretch: 108%; font-size: var(--fs-statement); line-height: 1.1; color: var(--navy); }
+  .sv__sum { color: var(--ink-2); font-size: var(--fs-small); max-width: 70ch; }
+  .sv__go { color: var(--teal); transition: transform var(--dur) var(--ease-out); }
+  .sv__row:hover .sv__go { transform: translateX(6px); }
+  @media (max-width: 760px) {
+    .sv__row { grid-template-columns: 96px minmax(0, 1fr); grid-template-areas: 'img txt'; gap: var(--s-2); }
+    .sv__n, .sv__go { display: none; }
+    .sv__img { grid-area: img; }
+    .sv__txt { grid-area: txt; }
+    .sv__sum { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  }
+</style>

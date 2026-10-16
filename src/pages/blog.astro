@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import CtaBand from '../components/site/CtaBand.astro';
+import Arrow from '../components/site/Arrow.astro';
+import { pages, posts, small, fmtDate } from '../data/site';
+import fs from 'node:fs';
+const p = pages['blog'];
+const cover = (slug: string) => (fs.existsSync(`public/img/blog/${slug}.jpg`) ? `/img/blog/${slug}.jpg` : null);
+const first = (b: typeof posts[number]) => b.blocks.find((x) => x.t === 'p' && x.x.length > 60)?.x ?? b.description;
+---
+<Base title={p.title} description={p.description}>
+  <PageHero title="Blog" lead={p.description} crumbs={[{ href: '/blog', label: 'Blog' }]} />
+  <section class="bl">
+    <div class="container bl__grid">
+      {posts.map((post, i) => {
+        const c = cover(post.slug);
+        return (
+          <a class="bl__card" href={`/post/${post.slug}`} data-reveal style={`--d:${(i % 3) * 0.06}`}>
+            <span class="bl__img">{c ? <img class="grade" src={small(c)} alt="" loading="lazy" decoding="async" width="1600" height="1000" /> : <span class="bl__ph" aria-hidden="true"></span>}</span>
+            <time class="bl__date label" datetime={post.published}>{fmtDate(post.published)}</time>
+            <span class="bl__h">{post.h1}</span>
+            <span class="bl__p">{first(post)}</span>
+            <span class="bl__go label">Read <Arrow /></span>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+  <CtaBand />
+</Base>
+<style>
+  .bl { padding-block: var(--section); background: var(--paper); }
+  .bl__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5) var(--s-3); }
+  .bl__card { display: grid; gap: 0.75rem; align-content: start; text-decoration: none; }
+  .bl__img { display: block; aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--radius); background: var(--navy); }
+  .bl__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease-out); }
+  .bl__card:hover .bl__img img { transform: scale(1.05); }
+  .bl__ph { display: block; width: 100%; height: 100%; background: radial-gradient(80% 100% at 80% 0%, var(--navy-3), var(--navy)); }
+  .bl__date { color: var(--teal-deep); }
+  .bl__h { font-family: var(--font-display); font-weight: 800; font-stretch: 106%; font-size: 1.3125rem; line-height: 1.2; color: var(--navy); }
+  .bl__p { color: var(--ink-2); font-size: var(--fs-small); display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .bl__go { display: inline-flex; gap: 0.5rem; align-items: center; color: var(--teal); }
+  .bl__go :global(svg) { width: 14px; }
+  @media (max-width: 960px) { .bl__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .bl__grid { grid-template-columns: minmax(0, 1fr); } }
+</style>

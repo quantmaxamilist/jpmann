@@ -1,0 +1,102 @@
+---
+// Loud brand moment: the enquiry band in the logo teal. Fields as on the old site's form.
+import Arrow from './Arrow.astro';
+import { home, contact, services, form, brochure } from '../../data/site';
+const { heading = home.contactH, tag = 'h2', id = 'contact' } = Astro.props;
+const H = tag;
+const f = form.fields;
+---
+<section class="eq" id={id}>
+  <div class="container eq__grid">
+    <div class="eq__intro">
+      <H class="display eq__h">{heading}</H>
+      <p class="eq__sub">{home.contactSub}</p>
+      <dl class="eq__dl">
+        <div><dt class="label">Contact</dt><dd>{brochure.contactName}</dd></div>
+        <div><dt class="label">CALL / WHATSAPP</dt><dd><a href={contact.phoneHref}>{contact.phone}</a></dd></div>
+        <div><dt class="label">EMAIL</dt><dd><a href={`mailto:${contact.email}`}>{contact.email}</a></dd></div>
+        <div><dt class="label">ADDRESS</dt><dd>{contact.address}</dd></div>
+      </dl>
+    </div>
+    <form class="eq__form" data-enquiry novalidate data-to={contact.email} data-thanks={form.thanks} data-labels={JSON.stringify(f)}>
+      <div class="eq__row">
+        <label class="eq__field"><span>{f.name}</span><input name="name" autocomplete="name" /></label>
+        <label class="eq__field"><span>{f.email} *</span><input name="email" type="email" required autocomplete="email" /></label>
+      </div>
+      <div class="eq__row">
+        <label class="eq__field"><span>{f.address}</span><input name="address" autocomplete="street-address" /></label>
+        <label class="eq__field"><span>{f.date}</span><input name="date" type="date" /></label>
+      </div>
+      <fieldset class="eq__services">
+        <legend>{f.service} *</legend>
+        <div class="eq__ticks">
+          {services.map((s) => (
+            <label class="eq__tick"><input type="checkbox" name="service" value={s.name} data-slug={s.slug} /><span>{s.name}</span></label>
+          ))}
+        </div>
+      </fieldset>
+      <label class="eq__field"><span>{f.details}</span><textarea name="details" rows="4"></textarea></label>
+      <div class="eq__foot">
+        <p class="eq__req">{form.required}</p>
+        <button class="btn btn--navy" type="submit">{form.submit} <Arrow /></button>
+      </div>
+      <p class="eq__msg" data-msg role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-enquiry]').forEach((el) => {
+    // ?package=<slug> (or ?service=<slug>) pre-ticks the matching service
+    const q = new URLSearchParams(location.search);
+    const want = q.get('package') || q.get('service');
+    if (want) el.querySelectorAll<HTMLInputElement>('[data-slug]').forEach((c) => { if (c.dataset.slug === want) c.checked = true; });
+    const msg = el.querySelector('[data-msg]')!;
+    const to = el.dataset.to!;
+    const L = JSON.parse(el.dataset.labels!);
+    el.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = new FormData(el);
+      const svc = d.getAll('service').join(', ');
+      const email = String(d.get('email') || '');
+      if (!/^\S+@\S+\.\S+$/.test(email) || !svc) {
+        msg.textContent = !svc ? 'Please tick at least one service.' : 'Please enter a valid email address.';
+        return;
+      }
+      // No backend yet: hand the enquiry to the visitor's mail app.
+      const body = [
+        `${L.name}: ${d.get('name') || ''}`, `${L.email}: ${email}`,
+        `${L.address}: ${d.get('address') || ''}`, `${L.date}: ${d.get('date') || ''}`,
+        `${L.service}: ${svc}`, '', String(d.get('details') || ''),
+      ].join('\n');
+      location.href = `mailto:${to}?subject=${encodeURIComponent('Enquiry: ' + svc)}&body=${encodeURIComponent(body)}`;
+      msg.textContent = el.dataset.thanks!;
+    });
+  });
+</script>
+<style>
+  .eq { padding-block: var(--section); background: var(--teal); color: var(--white); }
+  .eq__grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr); gap: var(--s-6); align-items: start; }
+  .eq__h { font-size: var(--fs-display-2); }
+  .eq__sub { margin-top: var(--s-2); font-size: var(--fs-lead); max-width: 26ch; }
+  .eq__dl { margin: var(--s-5) 0 0; display: grid; gap: var(--s-3); }
+  .eq__dl dt { margin-bottom: 0.3rem; }
+  .eq__dl dd { margin: 0; font-size: 1.125rem; }
+  .eq__dl a { text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.25rem, 1rem + 0.8vw, 1.75rem); }
+  .eq__dl a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .eq__form { background: var(--white); color: var(--ink); padding: clamp(1.25rem, 3vw, 2.5rem); border-radius: var(--radius); display: grid; gap: var(--s-3); }
+  .eq__row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-3); }
+  .eq__field { display: grid; gap: 0.4rem; font-size: var(--fs-small); font-weight: 500; }
+  .eq__field input, .eq__field textarea { width: 100%; font: inherit; font-size: 1rem; font-weight: 400; padding: 0.8rem 0.9rem; border: 1px solid var(--line-light); border-radius: var(--radius); background: var(--paper); color: var(--ink); min-height: 48px; }
+  .eq__field input:focus, .eq__field textarea:focus { outline: 2px solid var(--teal); outline-offset: 0; border-color: transparent; }
+  .eq__services { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .eq__services legend { font-size: var(--fs-small); font-weight: 500; margin-bottom: 0.6rem; padding: 0; }
+  .eq__ticks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+  .eq__tick { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; padding: 0.4rem 0.75rem; border: 1px solid var(--line-light); border-radius: var(--radius); font-size: var(--fs-small); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+  .eq__tick:has(input:checked) { border-color: var(--teal); background: rgba(27, 120, 149, 0.08); }
+  .eq__tick input { width: 18px; height: 18px; accent-color: var(--teal); flex: none; }
+  .eq__foot { display: flex; justify-content: space-between; align-items: center; gap: var(--s-2); flex-wrap: wrap; }
+  .eq__req { font-size: var(--fs-small); color: var(--ink-2); }
+  .eq__msg { min-height: 1.5em; font-size: var(--fs-small); color: var(--teal-deep); font-weight: 500; }
+  @media (max-width: 960px) { .eq__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-5); } }
+  @media (max-width: 560px) { .eq__row, .eq__ticks { grid-template-columns: minmax(0, 1fr); } .eq__foot .btn { width: 100%; justify-content: center; } }
+</style>

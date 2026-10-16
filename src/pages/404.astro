@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+---
+<Base title="Page not found | JPMANN" noindex>
+  <PageHero kicker="404" title="Page not found" lead="The page you were looking for has moved or no longer exists.">
+    <p class="nf"><a class="link-line" href="/services">See all services</a> · <a class="link-line" href="/">Home</a></p>
+  </PageHero>
+</Base>
+<style>.nf { margin-top: var(--s-3); } .nf a { text-decoration: none; }</style>

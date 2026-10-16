@@ -1,0 +1,21 @@
+---
+// Long-tail landing pages from the old site, kept at their exact old URLs with their own copy and titles.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Article from '../components/site/Article.astro';
+import CtaBand from '../components/site/CtaBand.astro';
+import { pages, landingSlugs, splitPage, topicImage } from '../data/site';
+export function getStaticPaths() {
+  return landingSlugs.map((slug) => ({ params: { slug } }));
+}
+const { slug } = Astro.params as { slug: string };
+const p = pages[slug];
+const { h1, lead, body } = splitPage(p);
+const img = topicImage(slug);
+const figure = /investigation|soil/.test(slug) ? '/img/soil-cores.jpg' : undefined;
+---
+<Base title={p.title} description={p.description} image={img}>
+  <PageHero title={h1} lead={lead} img={img} crumbs={[{ href: '/services', label: 'Services' }]} />
+  <Article blocks={body} img={figure} imgAlt="Soil core samples laid out on site" />
+  <CtaBand />
+</Base>

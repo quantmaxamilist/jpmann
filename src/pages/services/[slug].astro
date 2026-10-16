@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/site/PageHero.astro';
+import Article from '../../components/site/Article.astro';
+import CtaBand from '../../components/site/CtaBand.astro';
+import { pages, services, serviceImage, splitPage } from '../../data/site';
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+const { s } = Astro.props;
+const p = pages[s.old];
+const { h1, lead, body } = splitPage(p);
+const enquire = `/contact?package=${s.slug}`;
+---
+<Base title={p.title} description={p.description} image={serviceImage[s.slug]}>
+  <PageHero kicker={s.name} title={h1} lead={lead} img={serviceImage[s.slug]} ctaHref={enquire} crumbs={[{ href: '/services', label: 'Services' }, { href: `/services/${s.slug}`, label: s.name }]} />
+  <Article blocks={body} current={s.slug} href={enquire} />
+  <CtaBand href={enquire} />
+</Base>

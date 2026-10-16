@@ -1,0 +1,29 @@
+---
+// Clients hero background: the client names from the old site drift past in outlined type.
+// Names: the three named on the old Clients page plus the companies whose logos it showed (from their alt text).
+import { clients } from '../../data/site';
+const names = [...clients.named, ...clients.logos.slice(3).map((l) => l.alt.replace(/^Logo of /, '').replace(/\.$/, ''))];
+const rows = [names, [...names.slice(3), ...names.slice(0, 3)], [...names].reverse()];
+---
+<div class="nd">
+  {rows.map((r, i) => (
+    <div class:list={['nd__row', { 'nd__row--rev': i % 2 }]} style={`--dur:${70 + i * 15}s`}>
+      {[0, 1].map(() => (
+        <span class="nd__set">{r.map((n, j) => <span class:list={['nd__name', { 'nd__name--fill': (j + i) % 4 === 0 }]}>{n}</span>)}</span>
+      ))}
+    </div>
+  ))}
+</div>
+<style>
+  .nd { position: absolute; inset: 0; display: grid; align-content: center; gap: clamp(0.5rem, 2vw, 1.5rem); transform: rotate(-4deg) scale(1.15); }
+  .nd::after { content: ''; position: absolute; inset: -20%; background: linear-gradient(90deg, var(--navy) 0%, rgba(0, 30, 48, 0.82) 40%, rgba(0, 30, 48, 0.4) 100%); }
+  .nd__row { display: flex; width: max-content; animation: nd-move var(--dur) linear infinite; }
+  .nd__row--rev { animation-direction: reverse; }
+  .nd__set { display: flex; flex: none; }
+  .nd__name { flex: none; padding-right: 0.6em; font-family: var(--font-display); font-weight: 900; font-stretch: 115%; font-size: clamp(3rem, 1.5rem + 6vw, 8.5rem); line-height: 1; text-transform: uppercase; white-space: nowrap;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(63, 176, 210, 0.3); }
+  .nd__name::after { content: '·'; padding-left: 0.6em; -webkit-text-stroke: 0; color: rgba(63, 176, 210, 0.4); }
+  .nd__name--fill { color: rgba(63, 176, 210, 0.14); -webkit-text-stroke: 0; }
+  @keyframes nd-move { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .nd__row { animation: none; } }
+</style>

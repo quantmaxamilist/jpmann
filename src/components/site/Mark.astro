@@ -1,0 +1,8 @@
+---
+// The JP Mann "A" mark, traced from the logo file.
+const { class: cls = '', title } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 493 407" aria-hidden={title ? undefined : 'true'} role={title ? 'img' : undefined}>
+  {title && <title>{title}</title>}
+  <path d="M247 0 493 407H360L247 215 135 407H0Z" fill="currentColor" />
+</svg>

@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import Enquiry from '../components/site/Enquiry.astro';
+import { home, contact } from '../data/site';
+---
+<Base title="Contact Us | JPMANN" description={`${home.contactSub}. Call / WhatsApp ${contact.phone} or email ${contact.email}.`}>
+  <div class="ct-top"></div>
+  <Enquiry tag="h1" id="enquiry" />
+</Base>
+<style>
+  .ct-top { height: var(--header-h); background: var(--navy); }
+</style>

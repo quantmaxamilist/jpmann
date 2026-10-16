@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/home/Hero.astro';
+import About from '../components/home/About.astro';
+import Paths from '../components/home/Paths.astro';
+import WowGround from '../components/wow/WowGround.astro';
+import Projects from '../components/home/Projects.astro';
+import Clients from '../components/home/Clients.astro';
+import Enquiry from '../components/site/Enquiry.astro';
+import { home } from '../data/site';
+---
+<Base title={home.title} description={home.description}>
+  <link slot="head" rel="preload" as="image" href="/img/site-piling-aerial.jpg" imagesrcset="/img/hero-800.jpg 800w, /img/hero-1400.jpg 1400w, /img/site-piling-aerial.jpg 2400w" imagesizes="100vw" fetchpriority="high" />
+  <Hero />
+  <Paths />
+  <About />
+  <WowGround />
+  <Projects />
+  <Clients />
+  <Enquiry />
+</Base>

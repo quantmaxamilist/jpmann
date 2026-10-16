@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Clients from '../components/home/Clients.astro';
+import CtaBand from '../components/site/CtaBand.astro';
+import NameDrift from '../components/fx/NameDrift.astro';
+import { clients, about } from '../data/site';
+---
+<Base title={clients.title} description={clients.description}>
+  <PageHero kicker={about.clientsH} title={clients.h1} lead={clients.h2} crumbs={[{ href: '/clients', label: 'Clients' }]}>
+    <NameDrift slot="bg" />
+  </PageHero>
+  <Clients h={about.clientsH} sub={about.clientTypes.join(' · ')} />
+  <CtaBand />
+</Base>

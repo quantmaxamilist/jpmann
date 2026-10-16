@@ -1,0 +1,43 @@
+---
+// Services hero background: the client's own site photos crossfade slowly at low opacity.
+// Opacity + transform only; the first frame is static for reduced motion.
+const imgs = ['site-piling-aerial', 'projects/bengaluru', 'site-groundworks', 'projects/swindon-digesters', 'site-pile-layout', 'projects/loughton-steel']
+  .map((n) => `/img/bg/${n.split('/').pop()}.jpg`);
+const step = 5; // seconds each photo leads
+---
+<div class="pf" style={`--n:${imgs.length - 1};--step:${step}s`}>
+  {imgs.map((src, i) => {
+    const set = `${src.replace(/\.jpg$/, '-800.jpg')} 800w, ${src} 1280w`;
+    return i === 0
+      ? <img class="pf__img pf__img--base grade" src={src} srcset={set} sizes="100vw" alt="" decoding="async" fetchpriority="high" />
+      : <img class="pf__img grade" data-src={src} data-srcset={set} sizes="100vw" alt="" decoding="async" style={`--i:${i - 1}`} />;
+  })}
+</div>
+<script>
+  // The crossfading photos load only after the page has, so they never compete with the first paint.
+  const go = () => document.querySelectorAll<HTMLImageElement>('.pf__img[data-src]').forEach((im) => {
+    im.sizes = '100vw'; im.srcset = im.dataset.srcset!; im.src = im.dataset.src!;
+  });
+  const idle = (cb: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(cb, { timeout: 2500 }) : setTimeout(cb, 1200));
+  if (document.readyState === 'complete') idle(go); else addEventListener('load', () => idle(go), { once: true });
+</script>
+<style>
+  .pf { position: absolute; inset: 0; }
+  .pf::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--navy) 0%, rgba(0, 30, 48, 0.75) 45%, rgba(0, 30, 48, 0.35) 100%); }
+  .pf__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; will-change: opacity, transform;
+    animation: pf-fade calc(var(--n) * var(--step)) linear infinite; animation-delay: calc(var(--i) * var(--step)); }
+  /* The first photo is a static base layer (paints at once); the rest crossfade over it. */
+  .pf__img--base { animation: none; opacity: 0.42; }
+  /* Crossfading photos sit a hair inside the base, so they never register as a larger paint than it. */
+  .pf__img:not(.pf__img--base) { inset: 2px; width: calc(100% - 4px); height: calc(100% - 4px); }
+  @keyframes pf-fade {
+    0% { opacity: 0; transform: scale(1.1); }
+    7% { opacity: 0.42; }
+    17% { opacity: 0.42; }
+    24% { opacity: 0; transform: scale(1.02); }
+    100% { opacity: 0; transform: scale(1.02); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pf__img { animation: none; }
+  }
+</style>

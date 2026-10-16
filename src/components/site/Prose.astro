@@ -1,0 +1,47 @@
+---
+// Renders an old page's verbatim blocks. Headings step down one level (the page hero owns the h1);
+// "Term: text" paragraphs get the term in bold; bullet / tick lines become lists. Words are unchanged.
+import type { Block } from '../../data/site';
+const { blocks = [] as Block[] } = Astro.props;
+type Node = { kind: 'h2' | 'h3' | 'p' | 'ul'; text?: string; items?: string[] };
+const nodes: Node[] = [];
+const BULLET = /^(•|✔️|✔|-|–)\s*/u;
+const pushLi = (t: string) => {
+  const last = nodes[nodes.length - 1];
+  if (last?.kind === 'ul') last.items!.push(t); else nodes.push({ kind: 'ul', items: [t] });
+};
+for (const b of blocks) {
+  if (b.t === 'h1' || b.x === 'Tags:') continue;
+  if (/^h[2-6]$/.test(b.t)) { nodes.push({ kind: b.t === 'h2' ? 'h2' : 'h3', text: b.x.replace(/\s*\n\s*/g, ' ') }); continue; }
+  const lines = b.x.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+  for (const l of lines) {
+    if (b.t === 'li') pushLi(l);
+    else if (BULLET.test(l) && !/^-?\d/.test(l)) pushLi(l.replace(BULLET, ''));
+    else nodes.push({ kind: 'p', text: l });
+  }
+}
+const term = (t: string) => {
+  const m = t.match(/^([A-Z][^:.!?]{2,60}):\s+(.+)$/s);
+  return m ? { term: m[1] + ':', rest: m[2] } : null;
+};
+---
+<div class="prose">
+  {nodes.map((n) => {
+    if (n.kind === 'h2') return <h2>{n.text}</h2>;
+    if (n.kind === 'h3') return <h3>{n.text}</h3>;
+    if (n.kind === 'ul') return <ul>{n.items!.map((i) => { const t = term(i); return <li>{t ? <><strong>{t.term}</strong>{' '}{t.rest}</> : i}</li>; })}</ul>;
+    const t = term(n.text!);
+    return <p>{t ? <><strong>{t.term}</strong>{' '}{t.rest}</> : n.text}</p>;
+  })}
+</div>
+<style>
+  .prose { max-width: 72ch; color: var(--ink-2); overflow-wrap: anywhere; }
+  .prose > * + * { margin-top: 1.1em; }
+  .prose h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 108%; font-size: var(--fs-display-3); line-height: 1.1; color: var(--navy); margin-top: 1.8em; letter-spacing: -0.01em; }
+  .prose h3 { font-family: var(--font-display); font-weight: 750; font-stretch: 106%; font-size: 1.3125rem; line-height: 1.25; color: var(--navy); margin-top: 1.6em; }
+  .prose h2:first-child, .prose h3:first-child { margin-top: 0; }
+  .prose strong { color: var(--navy); font-weight: 650; }
+  .prose ul { padding: 0; list-style: none; display: grid; gap: 0.6em; }
+  .prose li { position: relative; padding-left: 1.4rem; }
+  .prose li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 8px; height: 8px; background: var(--teal); }
+</style>

@@ -1,0 +1,73 @@
+---
+// One route per kind of buyer, straight after the hero. Audience labels come from the old About page's
+// CLIENTS list, card copy from the sales brochure, link text from each target page's own h1.
+import Arrow from '../site/Arrow.astro';
+import { home, brochure, pages, services, serviceSummary } from '../../data/site';
+const h1 = (k: string) => pages[k].blocks.find((b) => b.t === 'h1')!.x.replace(/\s*\n+\s*/g, ' ');
+const svc = (slug: string) => services.find((s) => s.slug === slug)!;
+const paths = [
+  {
+    who: 'Private individuals',
+    h: brochure.residential[0].h,
+    p: brochure.residential[0].p,
+    links: ['house-extension-design', 'post/piling-house-extension', 'post/foundations-house-extension', 'post/how-to-tell-if-a-wall-is-load-bearing'].map((k) => ({ href: `/${k}`, t: h1(k) })),
+    cta: { href: '/contact', t: 'Get a free quote' },
+  },
+  {
+    who: 'Building contractors · Property developers',
+    h: svc('geotechnical-foundation-design').name,
+    p: serviceSummary(svc('geotechnical-foundation-design')),
+    links: [
+      ...['pile-design', 'ground-improvement', 'structural-engineering'].map((s) => ({ href: `/services/${s}`, t: svc(s).name })),
+      { href: '/projects', t: 'Projects Gallery' },
+    ],
+    cta: { href: '/contact?package=geotechnical-foundation-design', t: 'Send an enquiry' },
+  },
+  {
+    who: 'Loss adjusters',
+    h: brochure.residential[2].h,
+    p: brochure.residential[2].p,
+    links: ['expert-witness', 'post/construction-expert-witness', 'post/post-pile-failure-investigation'].map((k) => ({ href: `/${k}`, t: h1(k) })),
+    cta: { href: '/contact?package=expert-witness', t: 'Send an enquiry' },
+  },
+];
+---
+<section class="pa" aria-labelledby="pa-h">
+  <div class="container">
+    <div class="pa__head">
+      <p class="label pa__label">CLIENTS</p>
+      <h2 class="pa__h" id="pa-h" data-reveal>{home.clientsSub}</h2>
+    </div>
+    <div class="pa__grid">
+      {paths.map((x, i) => (
+        <article class="pa__card" data-reveal style={`--d:${i * 0.07}`}>
+          <p class="label pa__who">{x.who}</p>
+          <h3 class="pa__title">{x.h}</h3>
+          <p class="pa__p">{x.p}</p>
+          <ul class="pa__links" role="list">
+            {x.links.map((l) => <li><a href={l.href}><span>{l.t}</span><Arrow /></a></li>)}
+          </ul>
+          <a class="btn pa__cta" href={x.cta.href}>{x.cta.t} <Arrow /></a>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .pa { padding-block: clamp(3.5rem, 2.5rem + 4vw, 6.5rem); background: var(--white); }
+  .pa__head { display: grid; gap: var(--s-2); margin-bottom: var(--s-5); }
+  .pa__label { color: var(--teal); }
+  .pa__h { font-family: var(--font-display); font-weight: 800; font-stretch: 108%; font-size: var(--fs-display-3); line-height: 1.08; color: var(--navy); max-width: 26ch; letter-spacing: -0.01em; text-wrap: balance; }
+  .pa__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
+  .pa__card { display: flex; flex-direction: column; gap: var(--s-2); padding: var(--s-4); background: var(--paper); border-top: 3px solid var(--teal); border-radius: var(--radius); }
+  .pa__who { color: var(--teal-deep); }
+  .pa__title { font-family: var(--font-display); font-weight: 800; font-stretch: 108%; font-size: 1.5rem; line-height: 1.15; color: var(--navy); }
+  .pa__p { color: var(--ink-2); font-size: var(--fs-small); }
+  .pa__links { margin: var(--s-1) 0 0; padding: 0; border-top: 1px solid var(--line-light); }
+  .pa__links a { display: grid; grid-template-columns: minmax(0, 1fr) 16px; gap: var(--s-2); align-items: center; padding: 0.7rem 0; min-height: 44px; border-bottom: 1px solid var(--line-light); text-decoration: none; font-size: var(--fs-small); font-weight: 550; color: var(--navy); transition: color 0.2s, padding 0.3s var(--ease-out); }
+  .pa__links a :global(svg) { width: 14px; color: var(--teal); transition: transform var(--dur) var(--ease-out); }
+  .pa__links a:hover { color: var(--teal-deep); }
+  .pa__links a:hover :global(svg) { transform: translateX(3px); }
+  .pa__cta { margin-top: auto; align-self: flex-start; }
+  @media (max-width: 960px) { .pa__grid { grid-template-columns: minmax(0, 1fr); } }
+</style>

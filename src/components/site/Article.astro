@@ -1,0 +1,24 @@
+---
+// Inner-page body: verbatim prose on the left, sticky enquiry card on the right.
+import Prose from './Prose.astro';
+import Aside from './Aside.astro';
+import { srcsetFor } from '../../data/site';
+const { blocks, current, href, img, imgAlt = '' } = Astro.props;
+---
+<section class="art">
+  <div class="container art__grid">
+    <div class="art__main">
+      {img && <figure class="art__fig"><img class="grade" src={img} srcset={srcsetFor(img)} sizes="(max-width: 960px) 100vw, 900px" alt={imgAlt} loading="lazy" decoding="async" width="1600" height="1000" /></figure>}
+      <Prose blocks={blocks} />
+      <slot />
+    </div>
+    <Aside current={current} href={href} />
+  </div>
+</section>
+<style>
+  .art { padding-block: var(--section); background: var(--paper); }
+  .art__grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: clamp(2rem, 5vw, 6rem); }
+  .art__fig { margin-bottom: var(--s-5); border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 9; background: var(--paper-2); }
+  .art__fig img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 960px) { .art__grid { grid-template-columns: minmax(0, 1fr); } }
+</style>

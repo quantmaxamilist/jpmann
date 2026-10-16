@@ -1,0 +1,53 @@
+---
+import Logo from './Logo.astro';
+import { nav, contact, services } from '../../data/site';
+---
+<footer class="ftr dark">
+  <div class="container ftr__in">
+    <div class="ftr__brand">
+      <Logo />
+      <p class="muted">{contact.tagline}</p>
+    </div>
+    <div>
+      <p class="label ftr__h">ADDRESS</p>
+      <p>{contact.address}</p>
+    </div>
+    <div>
+      <p class="label ftr__h">CALL / WHATSAPP</p>
+      <p><a class="link-line" href={contact.phoneHref}>{contact.phone}</a></p>
+      <p class="label ftr__h ftr__h--gap">EMAIL</p>
+      <p><a class="link-line" href={`mailto:${contact.email}`}>{contact.email}</a></p>
+    </div>
+    <nav aria-label="Footer">
+      <p class="label ftr__h">Site</p>
+      <ul role="list">
+        <li><a class="link-line" href="/">Home</a></li>
+        {nav.map((n) => <li><a class="link-line" href={n.href}>{n.label}</a></li>)}
+        <li><a class="link-line" href="/contact">Contact</a></li>
+        <li><a class="link-line" href="/sales-brochure">Sales Brochure</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Services">
+      <p class="label ftr__h">Services</p>
+      <ul role="list">
+        {services.map((s) => <li><a class="link-line" href={`/services/${s.slug}`}>{s.name}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+  <div class="container ftr__base">
+    <p>{contact.copyright}</p>
+    <a class="link-line" href={contact.instagram} rel="noopener">Instagram {contact.instagramHandle}</a>
+  </div>
+</footer>
+<style>
+  .ftr { padding-block: var(--s-6) var(--s-4); font-size: var(--fs-small); }
+  .ftr__in { display: grid; grid-template-columns: 1.3fr 1fr 1fr 0.8fr 1.2fr; gap: var(--s-4); }
+  .ftr__brand p { margin-top: var(--s-2); }
+  .ftr__h { color: var(--teal-hi); margin-bottom: 0.6rem; }
+  .ftr__h--gap { margin-top: var(--s-3); }
+  .ftr a { text-decoration: none; }
+  .ftr ul { margin: 0; padding: 0; display: grid; gap: 0.35rem; }
+  .ftr__base { display: flex; justify-content: space-between; gap: var(--s-2); flex-wrap: wrap; margin-top: var(--s-6); padding-top: var(--s-3); border-top: 1px solid var(--line-dark); color: rgba(255, 255, 255, 0.6); }
+  @media (max-width: 1040px) { .ftr__in { grid-template-columns: 1fr 1fr; } .ftr__brand { grid-column: 1 / -1; } }
+  @media (max-width: 560px) { .ftr__in { grid-template-columns: minmax(0, 1fr); } }
+</style>

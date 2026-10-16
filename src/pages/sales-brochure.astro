@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/site/PageHero.astro';
+import CtaBand from '../components/site/CtaBand.astro';
+import Arrow from '../components/site/Arrow.astro';
+import { pages } from '../data/site';
+const p = pages['sales-brochure'];
+---
+<Base title={p.title} description={p.description}>
+  <PageHero title="Sales Brochure" crumbs={[{ href: '/sales-brochure', label: 'Sales Brochure' }]}>
+    <p class="sb"><a class="btn btn--light" href="/docs/jpmann-sales-brochure.pdf" download>Download PDF <Arrow /></a></p>
+  </PageHero>
+  <section class="sb-view">
+    <div class="container">
+      <object data="/docs/jpmann-sales-brochure.pdf" type="application/pdf" class="sb-pdf" aria-label="JP Mann sales brochure">
+        <p><a href="/docs/jpmann-sales-brochure.pdf">Download PDF</a></p>
+      </object>
+    </div>
+  </section>
+  <CtaBand />
+</Base>
+<style>
+  .sb { margin-top: var(--s-3); }
+  .sb-view { padding-block: var(--s-6); background: var(--paper); }
+  .sb-pdf { width: 100%; height: min(80vh, 1000px); border: 1px solid var(--line-light); border-radius: var(--radius); background: var(--white); }
+</style>
